@@ -1,14 +1,17 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
   NotFoundException,
   Param,
+  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
 import { CreateProductDto } from './dtos/create-product.dto';
+import { UpdateProductDto } from './dtos/update-product.dto';
 
 type ProductType = {
   id: number;
@@ -46,8 +49,8 @@ export class ProductsController {
 
   // get ('~/api/products/:id')
   @Get('/:id')
-  public getProductById(@Param('id') id: string) {
-    const product = this.products.find((p) => p.id === parseInt(id));
+  public getProductById(@Param('id', ParseIntPipe) id: number) {
+    const product = this.products.find((p) => p.id === id);
     if (!product) {
       throw new NotFoundException('Product not found');
     }
@@ -57,15 +60,30 @@ export class ProductsController {
   // put ('~/api/products/:id')
   @Put('/:id')
   public updateProduct(
-    @Param('id') id: string,
-    @Body() product: CreateProductDto,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() product: UpdateProductDto,
   ) {
-    const existingProduct = this.products.find((p) => p.id === parseInt(id));
+    if (!product.name && product.price === undefined) {
+      throw new BadRequestException('No data provided to update');
+    }
+    const existingProduct = this.products.find((p) => p.id === id);
+
     if (!existingProduct) {
       throw new NotFoundException('Product not found');
     }
-    existingProduct.name = product.name;
-    existingProduct.price = product.price;
+
+    if (!product.name && product.price === undefined) {
+      throw new BadRequestException('No data provided to update');
+    }
+
+    if (product.name !== undefined) {
+      existingProduct.name = product.name;
+    }
+
+    if (product.price !== undefined) {
+      existingProduct.price = product.price;
+    }
+
     return {
       message: 'Product updated successfully',
       product: existingProduct,

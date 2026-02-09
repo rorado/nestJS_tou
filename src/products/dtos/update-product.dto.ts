@@ -4,15 +4,18 @@ import {
   IsNumber,
   IsPositive,
   Length,
+  IsOptional,
 } from 'class-validator';
 
-export class CreateProductDto {
+export class UpdateProductDto {
   @IsString()
   @IsNotEmpty()
   @Length(3, 50)
-  name: string;
+  @IsOptional()
+  name?: string;
 
   @IsNumber()
   @IsPositive()
-  price: number;
+  @IsOptional()
+  price?: number;
 }
