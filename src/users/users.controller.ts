@@ -1,15 +1,30 @@
-import { Controller, Get } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  forwardRef,
+  Get,
+  Inject,
+  Post,
+} from '@nestjs/common';
+import { UsersService } from './user.service';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { ProductsService } from 'src/products/products.service';
 
-@Controller()
+@Controller('/api/users')
 export class UsersController {
-  // get (~api/users)
+  constructor(
+    @Inject(forwardRef(() => ProductsService))
+    private readonly productsService: ProductsService,
+    private readonly usersService: UsersService,
+  ) {}
 
-  @Get('/api/users')
+  // get (~api/users)
+  @Get()
   public getAllUsers() {
-    return [
-      { id: 1, name: 'User 1', email: 'user1@example.com' },
-      { id: 2, name: 'User 2', email: 'user2@example.com' },
-      { id: 3, name: 'User 3', email: 'user3@example.com' },
-    ];
+    console.log(this.productsService.getAllProducts());
+    return this.usersService.getAllUsers();
+  }
+  @Post() public createUser(@Body() newUser: CreateUserDto) {
+    return this.usersService.createUser(newUser);
   }
 }
