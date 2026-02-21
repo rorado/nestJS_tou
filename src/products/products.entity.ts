@@ -1,8 +1,12 @@
 import { IsOptional } from 'class-validator';
+import { ReviewsEntity } from 'src/reviews/reviews.entity';
+import { UserEntity } from 'src/users/users.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -21,6 +25,15 @@ export class ProductEntity {
   @Column({ type: 'text', nullable: true })
   @IsOptional()
   description?: string;
+
+  @OneToMany(() => ReviewsEntity, (reviews) => reviews.id, {
+    cascade: ['insert', 'update'],
+    onDelete: 'CASCADE',
+  })
+  reviews: ReviewsEntity[];
+
+  @ManyToOne(() => UserEntity, (user) => user.id)
+  user: UserEntity;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
