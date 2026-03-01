@@ -2,9 +2,7 @@ import {
   Body,
   Controller,
   Delete,
-  forwardRef,
   Get,
-  Inject,
   Param,
   Post,
   Put,
@@ -12,15 +10,10 @@ import {
 import { CreateProductDto } from './dtos/create-product.dto';
 import { UpdateProductDto } from './dtos/update-product.dto';
 import { ProductsService } from './products.service';
-import { UsersService } from 'src/users/user.service';
 
 @Controller('/api/products')
 export class ProductsController {
-  constructor(
-    @Inject(forwardRef(() => UsersService))
-    private readonly userServices: UsersService,
-    private readonly productsService: ProductsService,
-  ) {}
+  constructor(private readonly productsService: ProductsService) {}
 
   // post ('~/api/products')
   @Post()
@@ -31,7 +24,6 @@ export class ProductsController {
   // get ('~/api/products')
   @Get()
   public getAllProducts() {
-    console.log(this.userServices.getAllUsers());
     return this.productsService.getAllProducts();
   }
 
