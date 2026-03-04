@@ -15,11 +15,11 @@ export class ReviewsService {
     private reviewsRepository: Repository<ReviewsEntity>,
   ) {}
 
-  public async getAullReviews() {
+  public async getAllReviews() {
     return await this.reviewsRepository.find();
   }
 
-  public async getreviewsByID(id: string) {
+  public async getReviewById(id: string) {
     if (!isUUID(id)) throw new BadRequestException('Invalid Id');
     const review = await this.reviewsRepository.findOneBy({ id });
     if (!review) throw new NotFoundException('review not found');
